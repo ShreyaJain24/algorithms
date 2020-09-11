@@ -1,75 +1,78 @@
-Observations: 
-1. Low stickiness, Higher density. 
-2. Density approximation measures
-3. More breadth than depth
-4. stickiness - dependent or independent of N, mostly independent of N
-5. Density of a graph generally defined as: (density) = (the number of edges) / (the number of nodes)
+ALGORITHMS To find stickiness: 
 
 
 
-Algorithms: 
+1. Approximation of graph_density(D) using filters (like CNN - with one depth): 
 
+a. Estimate D by hovering filters of a definite size with a definite stride all over the image. 
+b. denisty of a filter  =  no of points(colored)/ area of square filters for each matrix. 
+Example: a 2x2 1s on one side vs 4 points on corners in a matrix
+c. Estimate k with approximation of the func by finding by best fit curve. Can use non-smooth functions like piecewise-splines if smooth standard functions like a polynomial function doesn't fit.
 
-1. Clustering Coefficient from Graph Theory
-a. graph traversal to find density of each node -> average density of the graph
-b. func(D)
-c. Estimate k with approximation of the func
-d. Algo to find global clustering coefficient = No of closed triangle points( when the triplets values are same)/ Total No of triangle points 
-e. Local clustering algo = for each vertex: no of connections/ possible number of connections
-example: a 2x2 1s on one side vs 4 points on corners in a matrix
+----------------------------------------------------------------------------------------------------------------------------------
+    
+2. Clustering Coefficient from Graph Theory
 
+Steps: 
+a. The goal is to calculate an average graph denisty. Then, find a function that best approximates k that takes input as the graph_density(D). Can find the function as a line of curve that best fits the observations of density, D against stickiness, k. Can use non-smooth functions like piecewise-splines if smooth standard functions like a polynomial function doesn't fit.
 
-2. Approximation of D using filters --DONE
-a. Estimate D = sampling circles = d =  no of points/ area of square filters for each matrix  - verified with an example
-example: a 2x2 1s on one side vs 4 points on corners in a matrix
+b. Global clustering coefficient = No of closed triangle points( when the triplets values are same)/ Total No of triangle points 
 
-b. func(D)
-c. Estimate k with approximation of the func
+c. Local clustering algo = for each vertex: no of connections/ possible number of connections
+example: a 2x2 1s on one side vs 4 points on corners in a matrix would have the same no of nodes but different density as their positioning varies.
+
+----------------------------------------------------------------------------------------------------------------------------------
 
     
-3. CNN 
-a. While applying the 2. algo, figured that we're relaying a square filter with overlap, a stride of negative
-b. Loss function - RMSE of stickiness value using a sigmoid function as values between 0 to 1
-c. Cons - need many training examples - and generation is a slow process here.
+3. CNN:
 
+a. Using a CNN architecture on the input image and capturing features at various layers. 
+b. Loss function - RMSE of the target stickiness value with the predicted stickiness value.
+c. Add a sigmoid function on the final CNN score to constrict the values between 0 to 1 as stickiness aslo lies in the same range.
+c. Cons - need many training examples as it's a deep network.
 
+----------------------------------------------------------------------------------------------------------------------------------
 
-4. Findinig the network density in hops. 
-a. From each point, possible connections, in one, two, .. hops. This takes a wider field of view in account from just one level of layering.
+4. Findinig the network density in hops:
+
+a. From each point, possible connections, in one, two, .. hops. This takes a wider field of view in account from just one level of layering. This is doing the job of a CNN but with defined iterative steps.
                         1' 
 b. i)     1          1' 1  1'
         1 1 1      1' 1 1  1 1'    bars are the second level hops 
           1          1' 1  1' 
                         1'
+                                                
+c. Determining the overall average density of the network by first calculating density at each hop and averaging them.
+d. Estimating stickiness using the same approaches as 2c. 
                         
-                        
-c. Determining the density at each hop. 
-                        
-
+----------------------------------------------------------------------------------------------------------------------------------
 
 5. Calculating perimeter of the structure. 
 
-a. The perimeter keeps shrinking in size as the density increases. 
-b. that as a func to calculate stickiness
+a. The perimeter of the structure keeps shrinking in size as the density increases. 
+b. Estimating stickiness as a function of this perimeter using multiple observations. 
+c. Estimating stickiness using the same approaches as 2c.
 
 
+----------------------------------------------------------------------------------------------------------------------------------
 
-6.
+6. Building features for a Machine Learning equation: 
 
-Func ( w1*(proportion of nodes with one connection) + w2*(proportion of nodes with two connections) + w3*(proportion of nodes with three connections) + w4*(proportion of nodes with four connection) ) = stickiness
+a. Func ( w1*(proportion of nodes with one connection) + w2*(proportion of nodes with two connections) + w3*(proportion of nodes with three connections) + w4*(proportion of nodes with four connection) ) = stickiness
 
+b. The hypothesis is proportion of nodes with one, two, three and four connections would vary with stickiness
+
+----------------------------------------------------------------------------------------------------------------------------------
 
 7. Using all above as features and the target value as stickiness
 
+a. Combining all above approaches as features for a Regression equation (with a scaling factor to normalise the outputs between 0 to 1)
 
-8. Find the prob directly 
+----------------------------------------------------------------------------------------------------------------------------------
+
+8. Find the prob directly? 
+
+----------------------------------------------------------------------------------------------------------------------------------
 
 
-Data for stickiness estimation: 
-Logging N, stickiness and average_density:
 
-
-500, 0.05, 4.993070427933126e-05
-500, 0.1, 7.781992648940816e-05
-500, 0.5, 5.667809674951114e-05
-500, 1, 4.318331180915135e-05
